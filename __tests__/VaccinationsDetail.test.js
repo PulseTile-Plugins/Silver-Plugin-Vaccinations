@@ -87,18 +87,18 @@ describe('Component <VaccinationDetail />', () => {
     expect(component.find('PluginDetailPanel').props().title).toEqual(VACCINATIONS_DETAIL_TITLE);
 
     expect(component.find('.control-label').at(0).text()).toEqual(valuesLabels.NAME);
-    expect(component.find('.control-label').at(1).text()).toEqual(valuesLabels.DATE_TIME);
-    expect(component.find('.control-label').at(2).text()).toEqual(valuesLabels.SERIES_NUMBER);
-    expect(component.find('.control-label').at(3).text()).toEqual(valuesLabels.SOURCE);
-    expect(component.find('.control-label').at(4).text()).toEqual(valuesLabels.COMMENT);
+    expect(component.find('.control-label').at(1).text()).toEqual(valuesLabels.COMMENT);
+    expect(component.find('.control-label').at(2).text()).toEqual(valuesLabels.DATE_TIME);
+    expect(component.find('.control-label').at(3).text()).toEqual(valuesLabels.SERIES_NUMBER);
+    expect(component.find('.control-label').at(4).text()).toEqual(valuesLabels.SOURCE);
     expect(component.find('.control-label').at(5).text()).toEqual(valuesLabels.AUTHOR);
     expect(component.find('.control-label').at(6).text()).toEqual(valuesLabels.DATE);
 
     expect(component.find('.form-control-static').at(0).text()).toEqual(detail[valuesNames.NAME]);
-    expect(component.find('.form-control-static').at(1).text()).toEqual(CONVERT_DATE_TIME);
-    expect(component.find('.form-control-static').at(2).text()).toEqual(detail[valuesNames.SERIES_NUMBER]);
-    expect(component.find('.form-control-static').at(3).text()).toEqual(detail[valuesNames.SOURCE]);
-    expect(component.find('.form-control-static').at(4).text()).toEqual(detail[valuesNames.COMMENT]);
+    expect(component.find('.form-control-static').at(1).text()).toEqual(detail[valuesNames.COMMENT]);
+    expect(component.find('.form-control-static').at(2).text()).toEqual(CONVERT_DATE_TIME);
+    expect(component.find('.form-control-static').at(3).text()).toEqual(detail[valuesNames.SERIES_NUMBER]);
+    expect(component.find('.form-control-static').at(4).text()).toEqual(detail[valuesNames.SOURCE]);
     expect(component.find('.form-control-static').at(5).text()).toEqual(detail[valuesNames.AUTHOR]);
     expect(component.find('.form-control-static').at(6).text()).toEqual(CONVERT_DATE);
   });

@@ -1,12 +1,32 @@
 import React from 'react';
 import Enzyme, { shallow } from 'enzyme';
+import { get } from 'lodash';
 import Adapter from 'enzyme-adapter-react-15';
 import configureStore from 'redux-mock-store';
 
 import Vaccinations from '../Vaccinations';
 import { valuesNames } from '../forms.config';
+import { themeConfigs } from '../../../../../themes.config';
 
 Enzyme.configure({ adapter: new Adapter() });
+
+/**
+ * This function check that button should be visible
+ *
+ * @param {array}   hiddenButtons
+ * @param {string}  buttonType
+ * @param {boolean} defaultResult
+ * @return {boolean}
+ */
+function isButtonVisible(hiddenButtons, buttonType, defaultResult) {
+    let result = defaultResult;
+    if (-1 !== hiddenButtons.indexOf(buttonType)) {
+        result = false;
+    }
+    return result;
+}
+
+const hiddenButtons = get(themeConfigs, 'buttonsToHide.vaccinations', []);
 
 // frequently used variables
 const userId = '9999999000';
@@ -158,7 +178,17 @@ describe('Component <Vaccinations />', () => {
 
     component.instance().handleDetailVaccinationsClick('065d85e3-3cd5-4604-bb94-5685fffb193d');
     const componentStateAfterMethod = component.state();
-    component.setState({ isSecondPanel: true, isDetailPanelVisible: true, isBtnExpandVisible: true, isBtnCreateVisible: true, isCreatePanelVisible: false, openedPanel: 'vaccinationsPanel', editedPanel: {}, expandedPanel: 'all', isLoading: true });
+    component.setState({
+      isSecondPanel: true,
+      isDetailPanelVisible: true,
+      isBtnExpandVisible: true,
+      isBtnCreateVisible: isButtonVisible(hiddenButtons, 'create', true),
+      isCreatePanelVisible: false,
+      openedPanel: 'vaccinationsPanel',
+      editedPanel: {},
+      expandedPanel: 'all',
+      isLoading: true
+    });
     const componentStateAfterSetState = component.state();
 
     expect(componentStateAfterMethod).toEqual(componentStateAfterSetState);

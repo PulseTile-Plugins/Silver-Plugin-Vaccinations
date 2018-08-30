@@ -1,19 +1,39 @@
 import React, { PureComponent } from 'react';
+import { get } from 'lodash';
 
 import PluginDetailPanel from '../../../../plugin-page-component/PluginDetailPanel'
 import VaccinationDetailForm from './VaccinationDetailForm'
 import { getDDMMMYYYY } from '../../../../../utils/time-helpers.utils';
 import { valuesNames, valuesLabels } from '../forms.config';
+import { themeConfigs } from '../../../../../themes.config';
 
 const VACCINATIONS_PANEL = 'vaccinationsPanel';
 
 export default class VaccinationDetail extends PureComponent {
+
+  /**
+   * This function check that button should be visible
+   *
+   * @param {array}   hiddenButtons
+   * @param {string}  buttonType
+   * @param {boolean} defaultResult
+   * @return {boolean}
+   */
+  isButtonVisible(hiddenButtons, buttonType, defaultResult) {
+    let result = defaultResult;
+    if (-1 !== hiddenButtons.indexOf(buttonType)) {
+      result = false;
+    }
+    return result;
+  }
+
   render() {
     const { onExpand, openedPanel, expandedPanel, currentPanel, onEdit, editedPanel, onCancel, onSaveSettings, vaccinationPanelFormValues, isSubmit } = this.props;
     let { detail } = this.props;
     detail = detail || {};
     const vaccinationDateTime = getDDMMMYYYY(detail[valuesNames.DATE_TIME]);
     const dateCreated = getDDMMMYYYY(detail[valuesNames.DATE]);
+    const hiddenButtons = get(themeConfigs, 'buttonsToHide.vaccinations', []);
     return (
       <div className="section-detail">
         <div className="panel-group accordion">
@@ -29,6 +49,7 @@ export default class VaccinationDetail extends PureComponent {
             onSaveSettings={onSaveSettings}
             formValues={vaccinationPanelFormValues}
             isBtnShowPanel={false}
+            isEditButton={this.isButtonVisible(hiddenButtons, 'edit', true)}
           >
             <div className="panel-body-inner">
               <div className="form">
@@ -41,7 +62,17 @@ export default class VaccinationDetail extends PureComponent {
                           <div className="form-control-static">{detail[valuesNames.NAME]}</div>
                         </div>
                       </div>
-                      <div className="col-expand-right">
+                    </div>
+                    <div className="row-expand">
+                      <div className="col-expand-left">
+                        <div className="form-group">
+                          <label className="control-label">{valuesLabels.COMMENT}</label>
+                          <div className="form-control-static">{detail[valuesNames.COMMENT]}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="row-expand">
+                      <div className="col-expand-left">
                         <div className="form-group">
                           <label className="control-label">{valuesLabels.DATE_TIME}</label>
                           <div className="form-control-static">{vaccinationDateTime}</div>
@@ -59,14 +90,6 @@ export default class VaccinationDetail extends PureComponent {
                         <div className="form-group">
                           <label className="control-label">{valuesLabels.SOURCE}</label>
                           <div className="form-control-static">{detail[valuesNames.SOURCE]}</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row-expand">
-                      <div className="col-expand-left">
-                        <div className="form-group">
-                          <label className="control-label">{valuesLabels.COMMENT}</label>
-                          <div className="form-control-static">{detail[valuesNames.COMMENT]}</div>
                         </div>
                       </div>
                     </div>
