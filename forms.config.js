@@ -12,12 +12,11 @@ export const valuesNames = {
 
 export const valuesLabels = {
   NAME: 'Vaccination Name',
-  DATE_TIME: 'Vaccination Date',
+  DATE_TIME: 'Date',
   SERIES_NUMBER: 'Series Number',
   COMMENT: 'Comment',
   AUTHOR: 'Author',
   DATE: 'Date',
-
-  SOURCE: 'Vaccination Source',
+  SOURCE: 'Source',
   SOURCE_ID: 'Source ID',
 };

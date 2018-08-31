@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import { Row, Col } from 'react-bootstrap';
 import classNames from 'classnames';
 import _ from 'lodash/fp';
+import { get } from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { lifecycle, compose } from 'recompose';
+
 import PluginListHeader from '../../../plugin-page-component/PluginListHeader';
 import PluginMainPanel from '../../../plugin-page-component/PluginMainPanel';
 import PluginBanner from '../../../plugin-page-component/PluginBanner';
@@ -24,11 +26,14 @@ import VaccinationDetail from './VaccinationDetail/VaccinationDetail';
 import PluginCreate from '../../../plugin-page-component/PluginCreate';
 import VaccinationCreateForm from './VaccinationCreate/VaccinationCreateForm';
 import { imageSource } from './ImageSource';
+import { themeConfigs } from '../../../../themes.config';
+import { isButtonVisible } from '../../../../utils/themeSettings-helper';
 
 const VACCINATIONS_MAIN = 'vaccinationsMain';
 const VACCINATIONS_DETAIL = 'vaccinationsDetail';
 const VACCINATIONS_CREATE = 'vaccinationsCreate';
 const VACCINATIONS_PANEL = 'vaccinationsPanel';
+const SYSTEM_INFO_PANEL = 'systemInformationPanel';
 
 const mapDispatchToProps = dispatch => ({ actions: bindActionCreators({ fetchPatientVaccinationsRequest, fetchPatientVaccinationsDetailRequest, fetchPatientVaccinationsDetailEditRequest, fetchPatientVaccinationsCreateRequest }, dispatch) });
 
@@ -57,7 +62,7 @@ export default class Vaccination extends PureComponent {
     columnNameSortBy: valuesNames.NAME,
     sortingOrder: 'asc',
     expandedPanel: 'all',
-    isBtnCreateVisible: true,
+    isBtnCreateVisible: false,
     isBtnExpandVisible: false,
     isAllPanelsVisible: false,
     isDetailPanelVisible: false,
@@ -72,16 +77,36 @@ export default class Vaccination extends PureComponent {
   componentWillReceiveProps() {
     const sourceId = this.context.router.route.match.params.sourceId;
     const userId = this.context.router.route.match.params.userId;
-
-    //TODO should be implemented common function, and the state stored in the store Redux
+    const hiddenButtons = get(themeConfigs, 'buttonsToHide.vaccinations', []);
     if (this.context.router.history.location.pathname === `${themeClientUrls.PATIENTS}/${userId}/${themeClientUrls.VACCINATIONS}/${sourceId}` && sourceId !== undefined) {
-      this.setState({ isSecondPanel: true, isDetailPanelVisible: true, isBtnExpandVisible: true, isBtnCreateVisible: true, isCreatePanelVisible: false })
+      this.setState({
+        isSecondPanel: true,
+        isDetailPanelVisible: true,
+        isBtnExpandVisible: true,
+        isBtnCreateVisible: isButtonVisible(hiddenButtons, 'create', true),
+        isCreatePanelVisible: false
+      });
     }
     if (this.context.router.history.location.pathname === `${themeClientUrls.PATIENTS}/${userId}/${themeClientUrls.VACCINATIONS}/create`) {
-      this.setState({ isSecondPanel: true, isBtnExpandVisible: true, isBtnCreateVisible: false, isCreatePanelVisible: true, openedPanel: VACCINATIONS_CREATE, isDetailPanelVisible: false })
+      this.setState({
+        isSecondPanel: true,
+        isBtnExpandVisible: true,
+        isBtnCreateVisible: isButtonVisible(hiddenButtons, 'create', false),
+        isCreatePanelVisible: true,
+        openedPanel: VACCINATIONS_CREATE,
+        isDetailPanelVisible: false
+      });
     }
     if (this.context.router.history.location.pathname === `${themeClientUrls.PATIENTS}/${userId}/${themeClientUrls.VACCINATIONS}`) {
-      this.setState({ isSecondPanel: false, isBtnExpandVisible: false, isBtnCreateVisible: true, isCreatePanelVisible: false, openedPanel: VACCINATIONS_PANEL, isDetailPanelVisible: false, expandedPanel: 'all' })
+      this.setState({
+        isSecondPanel: false,
+        isBtnExpandVisible: false,
+        isBtnCreateVisible: isButtonVisible(hiddenButtons, 'create', true),
+        isCreatePanelVisible: false,
+        openedPanel: VACCINATIONS_PANEL,
+        isDetailPanelVisible: false,
+        expandedPanel: 'all'
+      });
     }
 
     /* istanbul ignore next */
@@ -110,7 +135,18 @@ export default class Vaccination extends PureComponent {
 
   handleDetailVaccinationsClick = (sourceId) => {
     const { actions, userId } = this.props;
-    this.setState({ isSecondPanel: true, isDetailPanelVisible: true, isBtnExpandVisible: true, isBtnCreateVisible: true, isCreatePanelVisible: false, openedPanel: VACCINATIONS_PANEL, editedPanel: {}, expandedPanel: 'all', isLoading: true });
+    const hiddenButtons = get(themeConfigs, 'buttonsToHide.vaccinations', []);
+    this.setState({
+      isSecondPanel: true,
+      isDetailPanelVisible: true,
+      isBtnExpandVisible: true,
+      isBtnCreateVisible: isButtonVisible(hiddenButtons, 'create', true),
+      isCreatePanelVisible: false,
+      openedPanel: VACCINATIONS_PANEL,
+      editedPanel: {},
+      expandedPanel: 'all',
+      isLoading: true
+    });
     actions.fetchPatientVaccinationsDetailRequest({ userId, sourceId });
     this.context.router.history.push(`${themeClientUrls.PATIENTS}/${userId}/${themeClientUrls.VACCINATIONS}/${sourceId}`);
   };
@@ -121,6 +157,13 @@ export default class Vaccination extends PureComponent {
     const { userId } = this.props;
     this.setState({ isBtnCreateVisible: false, isCreatePanelVisible: true, openedPanel: VACCINATIONS_CREATE, isSecondPanel: true, isDetailPanelVisible: false, isBtnExpandVisible: true, expandedPanel: 'all', isSubmit: false, isLoading: true });
     this.context.router.history.push(`${themeClientUrls.PATIENTS}/${userId}/${themeClientUrls.VACCINATIONS}/create`);
+  };
+
+  handleShow = (name) => {
+    this.setState({ openedPanel: name });
+    if (this.state.expandedPanel !== 'all') {
+      this.setState({ expandedPanel: name });
+    }
   };
 
   handleEdit = (name) => {
@@ -230,7 +273,7 @@ export default class Vaccination extends PureComponent {
     const { selectedColumns, columnNameSortBy, sortingOrder, isSecondPanel, isDetailPanelVisible, isBtnExpandVisible, expandedPanel, openedPanel, isBtnCreateVisible, isCreatePanelVisible, editedPanel, offset, isSubmit, isLoading } = this.state;
     const { allVaccinations, vaccinationDetail, vaccinationPanelFormState, vaccinationCreateFormState } = this.props;
 
-    const isPanelDetails = (expandedPanel === VACCINATIONS_DETAIL || expandedPanel === VACCINATIONS_PANEL);
+    const isPanelDetails = (expandedPanel === VACCINATIONS_DETAIL || expandedPanel === VACCINATIONS_PANEL || expandedPanel === SYSTEM_INFO_PANEL);
     const isPanelMain = (expandedPanel === VACCINATIONS_MAIN);
     const isPanelCreate = (expandedPanel === VACCINATIONS_CREATE);
 
@@ -294,6 +337,7 @@ export default class Vaccination extends PureComponent {
               currentPanel={VACCINATIONS_DETAIL}
               detail={vaccinationDetail}
               onEdit={this.handleEdit}
+              onShow={this.handleShow}
               editedPanel={editedPanel}
               onCancel={this.handleVaccinationDetailCancel}
               onSaveSettings={this.handleSaveSettingsDetailForm}

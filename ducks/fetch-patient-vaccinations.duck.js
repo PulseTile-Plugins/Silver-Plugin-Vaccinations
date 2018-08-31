@@ -38,26 +38,14 @@ export const fetchPatientVaccinationsEpic = (action$, store) =>
     );
 
 export const fetchPatientVaccinationsSynopsisEpic = (action$, store) =>
-    action$.ofType(FETCH_PATIENT_VACCINATIONS_SYNOPSIS_REQUEST)
-        .mergeMap(({ payload }) =>
-            ajax.getJSON(`http://dev.ripple.foundation:8000/api/patients/${payload.userId}/synopsis/vaccinations`, {
-                Authorization: 'Bearer '+testConstants.token
-            })
-                .map(response => fetchPatientVaccinationsSuccess({
-                    userId: payload.userId,
-                    vaccinations: get(response, 'synopsis', []),
-                }))
-        );
-
-// export const fetchPatientVaccinationsSynopsisEpic = (action$, store) =>
-//   action$.ofType(FETCH_PATIENT_VACCINATIONS_SYNOPSIS_REQUEST)
-//     .mergeMap(({ payload }) =>
-//       ajax.getJSON(`${usersUrls.PATIENTS_URL}/${payload.userId}/synopsis/vaccinations`, {})
-//         .map(response => fetchPatientVaccinationsSuccess({
-//           userId: payload.userId,
-//           vaccinations: get(response, 'synopsis', []),
-//         }))
-//     );
+  action$.ofType(FETCH_PATIENT_VACCINATIONS_SYNOPSIS_REQUEST)
+    .mergeMap(({ payload }) =>
+      ajax.getJSON(`${usersUrls.PATIENTS_URL}/${payload.userId}/synopsis/vaccinations`, {})
+        .map(response => fetchPatientVaccinationsSuccess({
+          userId: payload.userId,
+          vaccinations: get(response, 'synopsis', []),
+        }))
+    );
 
 export const fetchPatientVaccinationsUpdateEpic = (action$, store) =>
   action$.ofType(FETCH_PATIENT_VACCINATIONS_UPDATE_REQUEST)
