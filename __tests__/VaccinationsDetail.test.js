@@ -1,16 +1,21 @@
 import React from 'react';
 import Enzyme, { shallow} from 'enzyme';
 import Adapter from 'enzyme-adapter-react-15';
+import { get } from 'lodash';
 
 import VaccinationDetail from '../VaccinationDetail/VaccinationDetail';
+import { themeConfigs } from '../../../../../themes.config';
 import { valuesNames, valuesLabels } from '../forms.config';
 import {getDDMMMYYYY} from '../../../../../utils/time-helpers.utils';
+import { isShowElement } from '../../../../../utils/themeSettings-helper';
 
 Enzyme.configure({ adapter: new Adapter() });
 
 const VACCINATIONS_PANEL = 'vaccinationsPanel';
 const VACCINATIONS_DETAIL_TITLE = 'Vaccination';
 const VACCINATIONS_DETAIL_EDIT_TITLE = 'Edit Vaccination';
+
+const hideElements = get(themeConfigs, 'detailsToHide.vaccinations', []);
 
 const testProps = {
   onExpand: () => {},
@@ -72,35 +77,56 @@ describe('Component <VaccinationDetail />', () => {
     expect(component.instance().props['isSubmit']).toEqual(false);
 
     expect(component.find('.section-detail')).toHaveLength(1);
-    expect(component.find('.form')).toHaveLength(1);
-    expect(component.find('PluginDetailPanel')).toHaveLength(1);
+    expect(component.find('.form')).toHaveLength(2);
+    expect(component.find('PluginDetailPanel')).toHaveLength(2);
 
-    expect(component.find('PluginDetailPanel').props().currentPanel).toEqual(testProps.currentPanel);
-    expect(component.find('PluginDetailPanel').props().editedPanel).toEqual(testProps.editedPanel);
-    expect(component.find('PluginDetailPanel').props().isBtnShowPanel).toEqual(false);
-    expect(component.find('PluginDetailPanel').props().isOpen).toEqual(testProps.editedPanel === VACCINATIONS_PANEL);
-    expect(component.find('PluginDetailPanel').props().name).toEqual(VACCINATIONS_PANEL);
-    expect(component.find('PluginDetailPanel').props().onCancel).toEqual(testProps.onCancel);
-    expect(component.find('PluginDetailPanel').props().onEdit).toEqual(testProps.onEdit);
-    expect(component.find('PluginDetailPanel').props().onExpand).toEqual(testProps.onExpand);
-    expect(component.find('PluginDetailPanel').props().onSaveSettings).toEqual(testProps.onSaveSettings);
-    expect(component.find('PluginDetailPanel').props().title).toEqual(VACCINATIONS_DETAIL_TITLE);
+    expect(component.find('PluginDetailPanel').at(0).props().currentPanel).toEqual(testProps.currentPanel);
+    expect(component.find('PluginDetailPanel').at(0).props().editedPanel).toEqual(testProps.editedPanel);
+    expect(component.find('PluginDetailPanel').at(0).props().isBtnShowPanel).toEqual(true);
+    expect(component.find('PluginDetailPanel').at(0).props().isOpen).toEqual(testProps.editedPanel === VACCINATIONS_PANEL);
+    expect(component.find('PluginDetailPanel').at(0).props().name).toEqual(VACCINATIONS_PANEL);
+    expect(component.find('PluginDetailPanel').at(0).props().onCancel).toEqual(testProps.onCancel);
+    expect(component.find('PluginDetailPanel').at(0).props().onEdit).toEqual(testProps.onEdit);
+    expect(component.find('PluginDetailPanel').at(0).props().onExpand).toEqual(testProps.onExpand);
+    expect(component.find('PluginDetailPanel').at(0).props().onSaveSettings).toEqual(testProps.onSaveSettings);
+    expect(component.find('PluginDetailPanel').at(0).props().title).toEqual(VACCINATIONS_DETAIL_TITLE);
 
-    expect(component.find('.control-label').at(0).text()).toEqual(valuesLabels.NAME);
-    expect(component.find('.control-label').at(1).text()).toEqual(valuesLabels.COMMENT);
-    expect(component.find('.control-label').at(2).text()).toEqual(valuesLabels.DATE_TIME);
-    expect(component.find('.control-label').at(3).text()).toEqual(valuesLabels.SERIES_NUMBER);
-    expect(component.find('.control-label').at(4).text()).toEqual(valuesLabels.SOURCE);
-    expect(component.find('.control-label').at(5).text()).toEqual(valuesLabels.AUTHOR);
-    expect(component.find('.control-label').at(6).text()).toEqual(valuesLabels.DATE);
+    let count = 0;
+    if (isShowElement(valuesNames.NAME, hideElements)) {
+      expect(component.find('.control-label').at(count).text()).toEqual(valuesLabels.NAME);
+      expect(component.find('.form-control-static').at(count).text()).toEqual(detail[valuesNames.NAME]);
+      count++;
+    }
+    if (isShowElement(valuesNames.COMMENT, hideElements)) {
+      expect(component.find('.control-label').at(count).text()).toEqual(valuesLabels.COMMENT);
+      expect(component.find('.form-control-static').at(count).text()).toEqual(detail[valuesNames.COMMENT]);
+      count++;
+    }
+    if (isShowElement(valuesNames.DATE_TIME, hideElements)) {
+      expect(component.find('.control-label').at(count).text()).toEqual(valuesLabels.DATE_TIME);
+      expect(component.find('.form-control-static').at(count).text()).toEqual(CONVERT_DATE_TIME);
+      count++;
+    }
+    if (isShowElement(valuesNames.SERIES_NUMBER, hideElements)) {
+      expect(component.find('.control-label').at(count).text()).toEqual(valuesLabels.SERIES_NUMBER);
+      expect(component.find('.form-control-static').at(count).text()).toEqual(detail[valuesNames.SERIES_NUMBER]);
+      count++;
+    }
+    if (isShowElement(valuesNames.AUTHOR, hideElements)) {
+      expect(component.find('.control-label').at(count).text()).toEqual(valuesLabels.AUTHOR);
+      expect(component.find('.form-control-static').at(count).text()).toEqual(detail[valuesNames.AUTHOR]);
+      count++;
+    }
+    if (isShowElement(valuesNames.DATE, hideElements)) {
+      expect(component.find('.control-label').at(count).text()).toEqual(valuesLabels.DATE);
+      expect(component.find('.form-control-static').at(count).text()).toEqual(CONVERT_DATE);
+      count++;
+    }
+    if (isShowElement(valuesNames.SOURCE, hideElements)) {
+      expect(component.find('.control-label').at(count).text()).toEqual(valuesLabels.SOURCE);
+      expect(component.find('.form-control-static').at(count).text()).toEqual(detail[valuesNames.SOURCE]);
+    }
 
-    expect(component.find('.form-control-static').at(0).text()).toEqual(detail[valuesNames.NAME]);
-    expect(component.find('.form-control-static').at(1).text()).toEqual(detail[valuesNames.COMMENT]);
-    expect(component.find('.form-control-static').at(2).text()).toEqual(CONVERT_DATE_TIME);
-    expect(component.find('.form-control-static').at(3).text()).toEqual(detail[valuesNames.SERIES_NUMBER]);
-    expect(component.find('.form-control-static').at(4).text()).toEqual(detail[valuesNames.SOURCE]);
-    expect(component.find('.form-control-static').at(5).text()).toEqual(detail[valuesNames.AUTHOR]);
-    expect(component.find('.form-control-static').at(6).text()).toEqual(CONVERT_DATE);
   });
 
   it('should renders correctly with different state of props', () => {
@@ -117,9 +143,9 @@ describe('Component <VaccinationDetail />', () => {
     component.setProps({ detail: detail });
     expect(component).toMatchSnapshot();
 
-    expect(component.find('PluginDetailPanel')).toHaveLength(1);
+    expect(component.find('PluginDetailPanel')).toHaveLength(2);
     expect(component.find('ReduxForm')).toHaveLength(1);
-    expect(component.find('PluginDetailPanel').props().title).toEqual(VACCINATIONS_DETAIL_EDIT_TITLE);
+    expect(component.find('PluginDetailPanel').at(0).props().title).toEqual(VACCINATIONS_DETAIL_EDIT_TITLE);
   });
 });
 

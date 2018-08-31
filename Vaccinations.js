@@ -27,11 +27,13 @@ import PluginCreate from '../../../plugin-page-component/PluginCreate';
 import VaccinationCreateForm from './VaccinationCreate/VaccinationCreateForm';
 import { imageSource } from './ImageSource';
 import { themeConfigs } from '../../../../themes.config';
+import { isButtonVisible } from '../../../../utils/themeSettings-helper';
 
 const VACCINATIONS_MAIN = 'vaccinationsMain';
 const VACCINATIONS_DETAIL = 'vaccinationsDetail';
 const VACCINATIONS_CREATE = 'vaccinationsCreate';
 const VACCINATIONS_PANEL = 'vaccinationsPanel';
+const SYSTEM_INFO_PANEL = 'systemInformationPanel';
 
 const mapDispatchToProps = dispatch => ({ actions: bindActionCreators({ fetchPatientVaccinationsRequest, fetchPatientVaccinationsDetailRequest, fetchPatientVaccinationsDetailEditRequest, fetchPatientVaccinationsCreateRequest }, dispatch) });
 
@@ -72,22 +74,6 @@ export default class Vaccination extends PureComponent {
     isLoading: true,
   };
 
-  /**
-   * This function check that button should be visible
-   *
-   * @param {array}   hiddenButtons
-   * @param {string}  buttonType
-   * @param {boolean} defaultResult
-   * @return {boolean}
-   */
-  isButtonVisible(hiddenButtons, buttonType, defaultResult) {
-    let result = defaultResult;
-    if (-1 !== hiddenButtons.indexOf(buttonType)) {
-      result = false;
-    }
-    return result;
-  }
-
   componentWillReceiveProps() {
     const sourceId = this.context.router.route.match.params.sourceId;
     const userId = this.context.router.route.match.params.userId;
@@ -97,7 +83,7 @@ export default class Vaccination extends PureComponent {
         isSecondPanel: true,
         isDetailPanelVisible: true,
         isBtnExpandVisible: true,
-        isBtnCreateVisible: this.isButtonVisible(hiddenButtons, 'create', true),
+        isBtnCreateVisible: isButtonVisible(hiddenButtons, 'create', true),
         isCreatePanelVisible: false
       });
     }
@@ -105,7 +91,7 @@ export default class Vaccination extends PureComponent {
       this.setState({
         isSecondPanel: true,
         isBtnExpandVisible: true,
-        isBtnCreateVisible: this.isButtonVisible(hiddenButtons, 'create', false),
+        isBtnCreateVisible: isButtonVisible(hiddenButtons, 'create', false),
         isCreatePanelVisible: true,
         openedPanel: VACCINATIONS_CREATE,
         isDetailPanelVisible: false
@@ -115,7 +101,7 @@ export default class Vaccination extends PureComponent {
       this.setState({
         isSecondPanel: false,
         isBtnExpandVisible: false,
-        isBtnCreateVisible: this.isButtonVisible(hiddenButtons, 'create', true),
+        isBtnCreateVisible: isButtonVisible(hiddenButtons, 'create', true),
         isCreatePanelVisible: false,
         openedPanel: VACCINATIONS_PANEL,
         isDetailPanelVisible: false,
@@ -154,7 +140,7 @@ export default class Vaccination extends PureComponent {
       isSecondPanel: true,
       isDetailPanelVisible: true,
       isBtnExpandVisible: true,
-      isBtnCreateVisible: this.isButtonVisible(hiddenButtons, 'create', true),
+      isBtnCreateVisible: isButtonVisible(hiddenButtons, 'create', true),
       isCreatePanelVisible: false,
       openedPanel: VACCINATIONS_PANEL,
       editedPanel: {},
@@ -171,6 +157,13 @@ export default class Vaccination extends PureComponent {
     const { userId } = this.props;
     this.setState({ isBtnCreateVisible: false, isCreatePanelVisible: true, openedPanel: VACCINATIONS_CREATE, isSecondPanel: true, isDetailPanelVisible: false, isBtnExpandVisible: true, expandedPanel: 'all', isSubmit: false, isLoading: true });
     this.context.router.history.push(`${themeClientUrls.PATIENTS}/${userId}/${themeClientUrls.VACCINATIONS}/create`);
+  };
+
+  handleShow = (name) => {
+    this.setState({ openedPanel: name });
+    if (this.state.expandedPanel !== 'all') {
+      this.setState({ expandedPanel: name });
+    }
   };
 
   handleEdit = (name) => {
@@ -280,7 +273,7 @@ export default class Vaccination extends PureComponent {
     const { selectedColumns, columnNameSortBy, sortingOrder, isSecondPanel, isDetailPanelVisible, isBtnExpandVisible, expandedPanel, openedPanel, isBtnCreateVisible, isCreatePanelVisible, editedPanel, offset, isSubmit, isLoading } = this.state;
     const { allVaccinations, vaccinationDetail, vaccinationPanelFormState, vaccinationCreateFormState } = this.props;
 
-    const isPanelDetails = (expandedPanel === VACCINATIONS_DETAIL || expandedPanel === VACCINATIONS_PANEL);
+    const isPanelDetails = (expandedPanel === VACCINATIONS_DETAIL || expandedPanel === VACCINATIONS_PANEL || expandedPanel === SYSTEM_INFO_PANEL);
     const isPanelMain = (expandedPanel === VACCINATIONS_MAIN);
     const isPanelCreate = (expandedPanel === VACCINATIONS_CREATE);
 
@@ -344,6 +337,7 @@ export default class Vaccination extends PureComponent {
               currentPanel={VACCINATIONS_DETAIL}
               detail={vaccinationDetail}
               onEdit={this.handleEdit}
+              onShow={this.handleShow}
               editedPanel={editedPanel}
               onCancel={this.handleVaccinationDetailCancel}
               onSaveSettings={this.handleSaveSettingsDetailForm}
