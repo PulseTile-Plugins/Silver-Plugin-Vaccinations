@@ -281,6 +281,8 @@ export default class Vaccination extends PureComponent {
 
     const filteredVaccinations = this.formToShowCollection(allVaccinations);
 
+    const hiddenButtons = get(themeConfigs, 'buttonsToHide.vaccinations', []);
+
     let sourceId;
     if (isDetailPanelVisible && !_.isEmpty(vaccinationDetail)) {
       sourceId = vaccinationDetail[valuesNames.SOURCE_ID];
@@ -348,6 +350,7 @@ export default class Vaccination extends PureComponent {
           {(expandedPanel === 'all' || isPanelCreate) && isCreatePanelVisible && !isDetailPanelVisible ? <Col xs={12} className={classNames({ 'col-panel-details': isSecondPanel })}>
             <PluginCreate
               onExpand={this.handleExpand}
+              headingName="vaccinations"
               name={VACCINATIONS_CREATE}
               openedPanel={openedPanel}
               onShow={this.handleShow}
@@ -357,6 +360,7 @@ export default class Vaccination extends PureComponent {
               formValues={vaccinationCreateFormState.values}
               onCancel={this.handleCreateCancel}
               isCreatePanelVisible={isCreatePanelVisible}
+              isCreationPermitted={isButtonVisible(hiddenButtons, 'create', true)}
               componentForm={
                 <VaccinationCreateForm isSubmit={isSubmit} />
               }
