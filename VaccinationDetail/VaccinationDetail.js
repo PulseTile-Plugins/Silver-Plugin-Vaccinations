@@ -68,17 +68,6 @@ export default class VaccinationDetail extends PureComponent {
                       </div>
                       : null }
 
-                    { isShowElement(valuesNames.DATE_TIME, hideElements) ?
-                      <div className="row-expand">
-                        <div className="col-expand-left">
-                          <div className="form-group">
-                            <label className="control-label">{valuesLabels.DATE_TIME}</label>
-                            <div className="form-control-static">{vaccinationDateTime}</div>
-                          </div>
-                        </div>
-                      </div>
-                      : null }
-
                     <div className="row-expand">
                       { isShowElement(valuesNames.SERIES_NUMBER, hideElements) ?
                         <div className="col-expand-left">
@@ -99,8 +88,18 @@ export default class VaccinationDetail extends PureComponent {
                           </div>
                         </div>
                         : null }
-
                     </div>
+
+                    { isShowElement(valuesNames.DATE_TIME, hideElements) ?
+                      <div className="row-expand">
+                        <div className="col-expand-left">
+                          <div className="form-group">
+                            <label className="control-label">{valuesLabels.DATE_TIME}</label>
+                            <div className="form-control-static">{vaccinationDateTime}</div>
+                          </div>
+                        </div>
+                      </div>
+                    : null }
 
                   </div>
                 </div>

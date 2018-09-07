@@ -102,11 +102,6 @@ describe('Component <VaccinationDetail />', () => {
       expect(component.find('.form-control-static').at(count).text()).toEqual(detail[valuesNames.COMMENT]);
       count++;
     }
-    if (isShowElement(valuesNames.DATE_TIME, hideElements)) {
-      expect(component.find('.control-label').at(count).text()).toEqual(valuesLabels.DATE_TIME);
-      expect(component.find('.form-control-static').at(count).text()).toEqual(CONVERT_DATE_TIME);
-      count++;
-    }
     if (isShowElement(valuesNames.SERIES_NUMBER, hideElements)) {
       expect(component.find('.control-label').at(count).text()).toEqual(valuesLabels.SERIES_NUMBER);
       expect(component.find('.form-control-static').at(count).text()).toEqual(detail[valuesNames.SERIES_NUMBER]);
@@ -116,6 +111,11 @@ describe('Component <VaccinationDetail />', () => {
       expect(component.find('.control-label').at(count).text()).toEqual(valuesLabels.AUTHOR);
       expect(component.find('.form-control-static').at(count).text()).toEqual(detail[valuesNames.AUTHOR]);
       count++;
+    }
+    if (isShowElement(valuesNames.DATE_TIME, hideElements)) {
+        expect(component.find('.control-label').at(count).text()).toEqual(valuesLabels.DATE_TIME);
+        expect(component.find('.form-control-static').at(count).text()).toEqual(CONVERT_DATE_TIME);
+        count++;
     }
     if (isShowElement(valuesNames.DATE, hideElements)) {
       expect(component.find('.control-label').at(count).text()).toEqual(valuesLabels.DATE);
