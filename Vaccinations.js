@@ -313,7 +313,7 @@ export default class Vaccination extends PureComponent {
               <PluginMainPanel
                 headers={columnsToShowConfig}
                 resourceData={allVaccinations}
-                emptyDataMessage="No vaccinations"
+                emptyDataMessage="No information available"
                 onHeaderCellClick={this.handleHeaderCellClick}
                 onCellClick={this.handleDetailVaccinationsClick}
                 columnNameSortBy={columnNameSortBy}
