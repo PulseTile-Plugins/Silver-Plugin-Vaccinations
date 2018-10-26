@@ -72,10 +72,14 @@ export default class Vaccination extends PureComponent {
     offset: 0,
     isSubmit: false,
     isLoading: true,
+    listPerPageAmount: 10,
   };
 
-  componentWillReceiveProps() {
+  componentWillReceiveProps({allVaccinations}) {
+    const {listPerPageAmount} = this.state;
     const sourceId = this.context.router.route.match.params.sourceId;
+    const indexOfCurrentItem = sourceId && allVaccinations ? this.formToShowCollection(allVaccinations).findIndex( _.matches({sourceId: sourceId})) : null;
+    const offset = Math.floor(indexOfCurrentItem / listPerPageAmount)*listPerPageAmount;
     const userId = this.context.router.route.match.params.userId;
     const hiddenButtons = get(themeConfigs, 'buttonsToHide.vaccinations', []);
     if (this.context.router.history.location.pathname === `${themeClientUrls.PATIENTS}/${userId}/${themeClientUrls.VACCINATIONS}/${sourceId}` && sourceId !== undefined) {
@@ -84,7 +88,8 @@ export default class Vaccination extends PureComponent {
         isDetailPanelVisible: true,
         isBtnExpandVisible: true,
         isBtnCreateVisible: isButtonVisible(hiddenButtons, 'create', true),
-        isCreatePanelVisible: false
+        isCreatePanelVisible: false,
+        offset,
       });
     }
     if (this.context.router.history.location.pathname === `${themeClientUrls.PATIENTS}/${userId}/${themeClientUrls.VACCINATIONS}/create`) {
@@ -270,7 +275,7 @@ export default class Vaccination extends PureComponent {
   };
 
   render() {
-    const { selectedColumns, columnNameSortBy, sortingOrder, isSecondPanel, isDetailPanelVisible, isBtnExpandVisible, expandedPanel, openedPanel, isBtnCreateVisible, isCreatePanelVisible, editedPanel, offset, isSubmit, isLoading } = this.state;
+    const { selectedColumns, columnNameSortBy, sortingOrder, isSecondPanel, isDetailPanelVisible, isBtnExpandVisible, expandedPanel, openedPanel, isBtnCreateVisible, isCreatePanelVisible, editedPanel, offset, isSubmit, isLoading, listPerPageAmount } = this.state;
     const { allVaccinations, vaccinationDetail, vaccinationPanelFormState, vaccinationCreateFormState } = this.props;
 
     const isPanelDetails = (expandedPanel === VACCINATIONS_DETAIL || expandedPanel === VACCINATIONS_PANEL || expandedPanel === SYSTEM_INFO_PANEL);
@@ -327,6 +332,7 @@ export default class Vaccination extends PureComponent {
                 onCreate={this.handleCreate}
                 id={sourceId}
                 isLoading={isLoading}
+                listPerPageAmount={listPerPageAmount}
               />
             </div>
           </Col> : null }
