@@ -298,14 +298,11 @@ export default class Vaccination extends PureComponent {
     }
 
     return (<section className="page-wrapper">
-      {!(isDetailPanelVisible || isCreatePanelVisible) ?
-        <PluginBanner
-          title='Vaccinations'
-          subTitle='A record of the immunisations/vaccines you have had to help you avoid ill health'
-          img={imageSource}
-        />
-        : null
-      }
+      <PluginBanner
+        title='Vaccinations'
+        subTitle='A record of the immunisations/vaccines you have had to help you avoid ill health'
+        img={imageSource}
+      />
       <div className={classNames('section', { 'full-panel full-panel-main': isPanelMain, 'full-panel full-panel-details': (isPanelDetails || isPanelCreate) })}>
         <Row>
           {(isPanelMain || expandedPanel === 'all') ? <Col xs={12} className={classNames({ 'col-panel-main': isSecondPanel })}>
